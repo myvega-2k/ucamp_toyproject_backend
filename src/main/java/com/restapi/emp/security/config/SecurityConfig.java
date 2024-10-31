@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/employees/welcome").permitAll()
+                    auth.requestMatchers("/api/employees/welcome","/userinfos/**").permitAll()
                             .requestMatchers("/api/employees/**").authenticated();
                 })
                 .formLogin(withDefaults())
