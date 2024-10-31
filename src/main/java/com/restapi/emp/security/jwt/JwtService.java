@@ -20,11 +20,12 @@ public class JwtService {
     private final static SecureDigestAlgorithm<SecretKey, SecretKey> ALGORITHM = Jwts.SIG.HS256;
     public static final int ACCESS_EXPIRE = 3600;
 
+    //Access Token 파싱
     private Claims extractAllClaims(String token) {
         return Jwts
-                .parser()
-                .verifyWith(KEY)
-                .build()
+                .parser() //JwtParserBuilder
+                .verifyWith(KEY) //secret key 검증하기
+                .build() //JwtParser
                 .parseSignedClaims(token)
                 .getPayload();
     }
@@ -48,6 +49,7 @@ public class JwtService {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
+        // Token에 포함된 email 주소와 DB에 저장된 email 주소가 같은지를 체크하고, token의 만료 여부 체크
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
