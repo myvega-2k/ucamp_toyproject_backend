@@ -5,12 +5,14 @@ import com.restapi.emp.security.model.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@Profile("test")
 public class UserInfoInsertRunner implements ApplicationRunner {
     @Autowired
     UserInfoRepository userInfoRepository;
@@ -21,8 +23,7 @@ public class UserInfoInsertRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("adminboot");
-        userInfo.setPassword(
-                passwordEncoder.encode("pwd1"));
+        userInfo.setPassword(passwordEncoder.encode("pwd1"));
         userInfo.setEmail("admin@aa.com");
         userInfo.setRoles("ROLE_ADMIN,ROLE_USER");
 
