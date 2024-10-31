@@ -28,11 +28,13 @@ public class UserInfoController {
 
 	@PostMapping("/login")
 	public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+		//AuthenticationManager 의 인증처리(authenticate) 요청
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						authRequest.getEmail(),
 						authRequest.getPassword()
 				));
+		//인증 성공 했어?
 		if (authentication.isAuthenticated()) {
 			return jwtService.generateToken(authRequest.getEmail());
 		} else {
