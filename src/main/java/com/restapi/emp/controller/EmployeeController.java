@@ -1,6 +1,8 @@
 package com.restapi.emp.controller;
 
 import com.restapi.emp.dto.EmployeeDto;
+import com.restapi.emp.security.model.CurrentUser;
+import com.restapi.emp.security.model.UserInfo;
 import com.restapi.emp.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,9 +43,13 @@ public class EmployeeController {
     // Build Get All Employees REST API
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
-        List<EmployeeDto> employees = employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees(@CurrentUser UserInfo currentUser){
+        List<EmployeeDto> employees = null;
+        if (currentUser != null) {
+            employees = employeeService.getAllEmployees();
+        }
         return ResponseEntity.ok(employees);
+
     }
 
     @GetMapping("/departments")
