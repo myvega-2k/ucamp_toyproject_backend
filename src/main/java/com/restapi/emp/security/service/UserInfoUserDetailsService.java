@@ -16,8 +16,9 @@ import java.util.Optional;
 public class UserInfoUserDetailsService implements UserDetailsService {
     @Autowired
     private UserInfoRepository repository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -27,11 +28,11 @@ public class UserInfoUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
     }
 
-    public String addUser(UserInfo userInfo) {
-        //password 암호화
-        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        //user_info 테이블에 Insert
-        UserInfo savedUserInfo = repository.save(userInfo);
-        return savedUserInfo.getName() + " user added!!";
-    }
+//    public String addUser(UserInfo userInfo) {
+//        //password 암호화
+//        userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+//        //user_info 테이블에 Insert
+//        UserInfo savedUserInfo = repository.save(userInfo);
+//        return savedUserInfo.getName() + " user added!!";
+//    }
 }
