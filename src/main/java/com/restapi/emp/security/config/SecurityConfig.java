@@ -1,5 +1,7 @@
 package com.restapi.emp.security.config;
 
+import com.restapi.emp.security.exception.CustomAccessDeniedHandler;
+import com.restapi.emp.security.exception.CustomAuthenticationEntryPoint;
 import com.restapi.emp.security.jwt.JwtAuthenticationFilter;
 import com.restapi.emp.security.service.UserInfoUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -50,6 +54,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(authManager -> authManager
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler()))
                 .build();
     }
 
@@ -57,6 +64,18 @@ public class SecurityConfig {
 //    public UserDetailsService userDetailsService() {
 //        return new UserInfoUserDetailsService();
 //    }
+
+    //401
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
+    //403
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
