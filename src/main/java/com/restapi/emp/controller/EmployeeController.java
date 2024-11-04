@@ -34,7 +34,6 @@ public class EmployeeController {
 
     // Build Get Employee REST API
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("id") Long employeeId){
         EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
         return ResponseEntity.ok(employeeDto);
@@ -42,7 +41,6 @@ public class EmployeeController {
 
     // Build Get All Employees REST API
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees(@CurrentUser UserInfo currentUser){
         List<EmployeeDto> employees = null;
         if (currentUser != null) {

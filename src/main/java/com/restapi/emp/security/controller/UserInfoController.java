@@ -14,17 +14,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/userinfos")
+@RequestMapping("/api/users")
 public class UserInfoController {
 //	@Autowired
 //	private UserInfoUserDetailsService service;
@@ -49,18 +47,22 @@ public class UserInfoController {
 				new UsernamePasswordAuthenticationToken(
 						authRequest.getEmail(),
 						authRequest.getPassword()
+//						authRequest.getUser(),
+//						authRequest.getPwd()
 				));
 		//인증 성공 했어?
 		if (authentication.isAuthenticated()) {
-			String token = jwtService.generateToken(authRequest.getEmail());
+			String email = authRequest.getEmail();
+
+			String token = jwtService.generateToken(email);
 			AuthResponse authResponse = new AuthResponse(token);
-			authResponse.setUser(authRequest.getEmail());
+			authResponse.setUser(email);
 
 			Optional<UserInfo> optionalUser =
-					repository.findByEmail(authRequest.getEmail());
+					repository.findByEmail(email);
 			if(optionalUser.isPresent()){
 				UserInfo userEntity = optionalUser.get();
-				authResponse.setRoles(userEntity.getRoles());
+				authResponse.setRoles(userEntity.getRoles().split(","));
 			}
 			return new ResponseEntity<>(authResponse, HttpStatus.OK);
 		} else {
@@ -78,5 +80,10 @@ public class UserInfoController {
 		userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
 		UserInfo savedUserInfo = repository.save(userInfo);
 		return savedUserInfo.getName() + " user added!!";
+	}
+
+	@GetMapping
+	public ResponseEntity<List<UserInfo>> getUser() {
+		return ResponseEntity.ok(repository.findAll());
 	}
 }
