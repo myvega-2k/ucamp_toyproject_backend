@@ -70,13 +70,15 @@ public class JwtService {
     //Access Token 발행
     public String generateToken(String userName){
         // 토큰 만료시간 ACCESS_EXPIRE 3600초 => 60분
-        Date exprireDate = Date.from(Instant.now().plusSeconds(ACCESS_EXPIRE));
+        Date exprireDate = Date.from(Instant.now()
+                .plusSeconds(30));
+                //.plusSeconds(ACCESS_EXPIRE));
 
         return Jwts.builder() //JwtBuilder
                 .signWith(KEY, ALGORITHM) // Header에 Secret 값과 알고리즘 정보를 저장
                 .subject(userName)  //Payload 의 subject에 email 주소 저장
                 .issuedAt(new Date())  //토큰 발행 시간
-                .expiration(exprireDate) //토큰 만료 시간 ( 현재 이후 시간 + 60분 )
+                .expiration(exprireDate) //토큰 만료 시간 ( 현재 이후 시간 + 60분 = 3600초)
                 .compact();
     }
 }
