@@ -43,6 +43,7 @@ public class DepartmentController {
 
     // Build Update Department REST API
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<DepartmentDto> updateDepartment(@PathVariable("id") Long departmentId,
                                                           @RequestBody DepartmentDto updatedDepartment){
         DepartmentDto departmentDto = departmentService.updateDepartment(departmentId, updatedDepartment);
@@ -51,6 +52,7 @@ public class DepartmentController {
 
     // Build Delete Department REST API
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> deleteDepartment(@PathVariable("id") Long departmentId){
         departmentService.deleteDepartment(departmentId);
         return ResponseEntity.ok("Department deleted successfully!.");

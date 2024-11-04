@@ -1,8 +1,10 @@
 package com.restapi.emp.controller;
 
+import com.restapi.emp.dto.DepartmentDto;
 import com.restapi.emp.dto.EmployeeDto;
 import com.restapi.emp.security.model.CurrentUser;
 import com.restapi.emp.security.model.UserInfo;
+import com.restapi.emp.service.DepartmentService;
 import com.restapi.emp.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final DepartmentService departmentService;
 
     //인증 없이 접근 가능한 메서드
     @GetMapping("/welcome")
@@ -41,11 +44,8 @@ public class EmployeeController {
 
     // Build Get All Employees REST API
     @GetMapping
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees(@CurrentUser UserInfo currentUser){
-        List<EmployeeDto> employees = null;
-        if (currentUser != null) {
-            employees = employeeService.getAllEmployees();
-        }
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees(){
+        List<EmployeeDto> employees = employeeService.getAllEmployees();
         return ResponseEntity.ok(employees);
 
     }
@@ -55,18 +55,33 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllEmployeesDepartment());
     }
 
+    @GetMapping("/departmentNames")
+    public ResponseEntity<List<DepartmentDto>> getAllDepartmentNames() {
+        return ResponseEntity.ok(departmentService.getAllDepartments());
+    }
+
     // Build Update Employee REST API
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") Long employeeId,
-                                                      @RequestBody EmployeeDto updatedEmployee){
-          EmployeeDto employeeDto = employeeService.updateEmployee(employeeId, updatedEmployee);
-          return ResponseEntity.ok(employeeDto);
+                                                      @RequestBody EmployeeDto updatedEmployee,
+                                                      @CurrentUser UserInfo currentUser){
+        EmployeeDto employeeDto = null;
+        if (currentUser != null) {
+            System.out.println(">>>> Current User + " +  currentUser.getEmail());
+            employeeDto = employeeService.updateEmployee(employeeId, updatedEmployee);
+        }
+        return ResponseEntity.ok(employeeDto);
     }
 
     // Build Delete Employee REST API
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId){
-        employeeService.deleteEmployee(employeeId);
+    //@PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId,
+                                                 @CurrentUser UserInfo currentUser){
+        if (currentUser != null) {
+            employeeService.deleteEmployee(employeeId);
+        }
         return ResponseEntity.ok("Employee deleted successfully!.");
     }
 }

@@ -68,6 +68,8 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/**").permitAll()
                             .requestMatchers(HttpMethod.GET,"/api/employees/**").permitAll()
                             .requestMatchers(HttpMethod.POST,"/api/employees/**").permitAll()
+                            .requestMatchers(HttpMethod.PUT,"/api/employees/**").authenticated()
+                            .requestMatchers(HttpMethod.DELETE,"/api/employees/**").authenticated()
                             .requestMatchers("/api/departments/**").authenticated();
                 })
                 //.formLogin(withDefaults())
